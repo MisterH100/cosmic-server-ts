@@ -35,51 +35,52 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var router = (0, express_1.Router)();
-var Invoice = require("../models/invoices");
-var Qoute = require("../models/qoutes");
-router.get("/qoutes/data/download", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error_1;
+var express_1 = __importDefault(require("express"));
+var cloudinary_1 = require("cloudinary");
+var express_fileupload_1 = __importDefault(require("express-fileupload"));
+var router = express_1.default.Router();
+cloudinary_1.v2.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+    secure: true,
+});
+router.post("/api/upload-image", (0, express_fileupload_1.default)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var file, cleanseString;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Qoute.find()
-                        .then(function (file) {
-                        res.download(file);
-                    })];
-            case 1:
-                _a.sent();
-                return [3 /*break*/, 3];
-            case 2:
-                error_1 = _a.sent();
-                res.send(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+        file = req.files.image;
+        cleanseString = function (string) {
+            return (string
+                .replace(/[^a-zA-Z]/g, "")
+                .replace(/png|jpg|jpeg/gi, "")
+                .toLocaleLowerCase()
+                .trim() +
+                "-" +
+                Date.now());
+        };
+        try {
+            cloudinary_1.v2.uploader
+                .upload_stream({
+                folder: "misc",
+                public_id: cleanseString(file.name),
+            }, function (err, data) {
+                if (err) {
+                    res.status(500).send(err);
+                }
+                else {
+                    res.status(200).send(data === null || data === void 0 ? void 0 : data.url);
+                }
+            })
+                .end(file.data);
         }
+        catch (error) {
+            res.send(error);
+        }
+        return [2 /*return*/];
     });
 }); });
-router.get("/invoices/data/download", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error_2;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Invoice.find()
-                        .then(function (file) {
-                        res.download(file);
-                    })];
-            case 1:
-                _a.sent();
-                return [3 /*break*/, 3];
-            case 2:
-                error_2 = _a.sent();
-                res.send(error_2);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-module.exports = router;
+exports.default = router;
