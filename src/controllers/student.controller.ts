@@ -28,7 +28,7 @@ export const registerStudent = async (req: express.Request, res: express.Respons
       await newStudent.save();
       res.status(200).json({
         message: "student registered successfully",
-        user: {
+        student: {
           _id: newStudent._id,
           studentID: newStudent.studentID,
           first_name: newStudent.first_name,

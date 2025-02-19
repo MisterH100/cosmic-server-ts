@@ -89,7 +89,7 @@ var registerStudent = function (req, res) { return __awaiter(void 0, void 0, voi
                 _b.sent();
                 res.status(200).json({
                     message: "student registered successfully",
-                    user: {
+                    student: {
                         _id: newStudent._id,
                         studentID: newStudent.studentID,
                         first_name: newStudent.first_name,
