@@ -2,12 +2,12 @@ import express from "express";
 import bcrypt from "bcrypt";
 import Student from "../models/student.model";
 
-export const registerStudent = async (req: express.Request, res: express.Response) => {
-  const { studentID, first_name, last_name, email, phone, gender, address, password } = req.body;
+export const registerStudent = async (req: any, res: express.Response) => {
+  const { studentID, first_name, last_name, email, phone, gender, address, password } = req.stu;
   try {
     const student = await Student.findOne({ studentID: studentID });
     if (student) {
-      res.status(409).json({ message: "this ID is already registered" });
+      res.status(409).json({ message: "this ID is already registered", error: "conflict error" });
     } else {
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = bcrypt.hashSync(password, salt);
@@ -44,7 +44,7 @@ export const registerStudent = async (req: express.Request, res: express.Respons
   } catch (error) {
     res
       .status(500)
-      .json({ message: "failed to register, internal server error" });
+      .json({ message: "failed to register, internal server error", error });
   }
 }
 
@@ -53,12 +53,12 @@ export const loginStudent = async (req: express.Request, res: express.Response) 
   try {
     const student = await Student.findOne({ studentID: studentID });
     if (!student) {
-      res.status(400).json({ message: "student does not exist" });
+      res.status(400).json({ message: "student does not exist", error: "invalid error" });
     } else {
       const validatePassword = bcrypt.compareSync(password, student.password);
 
       if (!validatePassword) {
-        res.status(400).json({ message: "wrong credentials" });
+        res.status(400).json({ message: "wrong credentials", error: "invalid error" });
       }
       if (validatePassword) {
         await Student.findByIdAndUpdate(student._id, {
@@ -88,6 +88,7 @@ export const logoutStudent = async (req: express.Request, res: express.Response)
   } catch (error) {
     res
       .status(500)
-      .json({ message: "failed to logout, internal server error" });
+      .json({ message: "failed to logout, internal server error", error });
   }
 };
+

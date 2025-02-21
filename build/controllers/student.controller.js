@@ -58,7 +58,7 @@ var registerStudent = function (req, res) { return __awaiter(void 0, void 0, voi
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, studentID = _a.studentID, first_name = _a.first_name, last_name = _a.last_name, email = _a.email, phone = _a.phone, gender = _a.gender, address = _a.address, password = _a.password;
+                _a = req.stu, studentID = _a.studentID, first_name = _a.first_name, last_name = _a.last_name, email = _a.email, phone = _a.phone, gender = _a.gender, address = _a.address, password = _a.password;
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 6, , 7]);
@@ -66,7 +66,7 @@ var registerStudent = function (req, res) { return __awaiter(void 0, void 0, voi
             case 2:
                 student = _b.sent();
                 if (!student) return [3 /*break*/, 3];
-                res.status(409).json({ message: "this ID is already registered" });
+                res.status(409).json({ message: "this ID is already registered", error: "conflict error" });
                 return [3 /*break*/, 5];
             case 3:
                 salt = bcrypt_1.default.genSaltSync(10);
@@ -107,7 +107,7 @@ var registerStudent = function (req, res) { return __awaiter(void 0, void 0, voi
                 error_1 = _b.sent();
                 res
                     .status(500)
-                    .json({ message: "failed to register, internal server error" });
+                    .json({ message: "failed to register, internal server error", error: error_1 });
                 return [3 /*break*/, 7];
             case 7: return [2 /*return*/];
         }
@@ -127,12 +127,12 @@ var loginStudent = function (req, res) { return __awaiter(void 0, void 0, void 0
             case 2:
                 student = _c.sent();
                 if (!!student) return [3 /*break*/, 3];
-                res.status(400).json({ message: "student does not exist" });
+                res.status(400).json({ message: "student does not exist", error: "invalid error" });
                 return [3 /*break*/, 5];
             case 3:
                 validatePassword = bcrypt_1.default.compareSync(password, student.password);
                 if (!validatePassword) {
-                    res.status(400).json({ message: "wrong credentials" });
+                    res.status(400).json({ message: "wrong credentials", error: "invalid error" });
                 }
                 if (!validatePassword) return [3 /*break*/, 5];
                 return [4 /*yield*/, student_model_1.default.findByIdAndUpdate(student._id, {
@@ -175,7 +175,7 @@ var logoutStudent = function (req, res) { return __awaiter(void 0, void 0, void 
                 error_3 = _a.sent();
                 res
                     .status(500)
-                    .json({ message: "failed to logout, internal server error" });
+                    .json({ message: "failed to logout, internal server error", error: error_3 });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

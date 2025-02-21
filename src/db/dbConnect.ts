@@ -5,7 +5,7 @@ const connectToDatabase = () => {
     .connect(process.env.MONGO_STRING || " ")
     .then(() => console.log("Connected to DataBase"))
     .catch((err) => {
-      console.log(err + "Failed to Connect to DataBase");
+      console.log({ message: "Failed to Connect to DataBase", err });
     });
 };
 

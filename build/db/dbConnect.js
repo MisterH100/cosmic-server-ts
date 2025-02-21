@@ -9,7 +9,7 @@ var connectToDatabase = function () {
         .connect(process.env.MONGO_STRING || " ")
         .then(function () { return console.log("Connected to DataBase"); })
         .catch(function (err) {
-        console.log(err + "Failed to Connect to DataBase");
+        console.log({ message: "Failed to Connect to DataBase", err: err });
     });
 };
 exports.default = connectToDatabase;

@@ -1,19 +1,5 @@
-import mongoose, { Document } from "mongoose";
-
-type genderT = "male" | "female";
-interface studentInterface extends Document {
-  studentID: string,
-  first_name: string,
-  last_name: string,
-  email: string,
-  gender: genderT,
-  password: string,
-  phone: string,
-  address: string,
-  profileImage: string
-  logged_in: boolean,
-  _doc: any
-}
+import mongoose from "mongoose";
+import { studentInterface } from "../interfaces/student.interface";
 
 const studentSchema = new mongoose.Schema<studentInterface>(
   {
