@@ -10,4 +10,5 @@ var router = express_1.default.Router();
 router.post("/register", verifyID_1.default, student_controller_1.registerStudent);
 router.post("/login", student_controller_1.loginStudent);
 router.post("/logout", student_controller_1.logoutStudent);
+router.get("/student-info/:id", student_controller_1.studentInfo);
 exports.default = router;

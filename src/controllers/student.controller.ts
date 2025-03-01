@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import Student from "../models/student.model";
+import GCCStudent from "../models/gcc-student.model";
 
 export const registerStudent = async (req: any, res: express.Response) => {
   const { studentID, first_name, last_name, email, phone, gender, address, password } = req.stu;
@@ -92,3 +93,13 @@ export const logoutStudent = async (req: express.Request, res: express.Response)
   }
 };
 
+export const studentInfo = async (req: express.Request, res: express.Response) => {
+  const student_ID = req.params.id;
+  try {
+    const studentInfo = await GCCStudent.findOne({ ID: student_ID });
+    res.status(200).json({ studentInfo, message: "successfully found student info" });
+  } catch (error) {
+    res.status(500).json({ message: "failed to fetch student info, internal server error", error });
+  }
+
+}

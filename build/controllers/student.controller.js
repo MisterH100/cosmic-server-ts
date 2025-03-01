@@ -50,9 +50,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logoutStudent = exports.loginStudent = exports.registerStudent = void 0;
+exports.studentInfo = exports.logoutStudent = exports.loginStudent = exports.registerStudent = void 0;
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var student_model_1 = __importDefault(require("../models/student.model"));
+var gcc_student_model_1 = __importDefault(require("../models/gcc-student.model"));
 var registerStudent = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, studentID, first_name, last_name, email, phone, gender, address, password, student, salt, hashedPassword, maleProfilePic, femaleProfilePic, newStudent, error_1;
     return __generator(this, function (_b) {
@@ -182,3 +183,26 @@ var logoutStudent = function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.logoutStudent = logoutStudent;
+var studentInfo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var student_ID, studentInfo_1, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                student_ID = req.params.id;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, gcc_student_model_1.default.findOne({ ID: student_ID })];
+            case 2:
+                studentInfo_1 = _a.sent();
+                res.status(200).json({ studentInfo: studentInfo_1, message: "successfully found student info" });
+                return [3 /*break*/, 4];
+            case 3:
+                error_4 = _a.sent();
+                res.status(500).json({ message: "failed to fetch student info, internal server error", error: error_4 });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.studentInfo = studentInfo;
