@@ -7,10 +7,9 @@ export const getSchedule = async (req: express.Request, res: express.Response) =
   const certificate = req.query.certificate;
 
   try {
-    const schedule = await Schedule.find({ $and: [{ COURSE: course }, { CERTIFICATE: certificate }] });
+    const schedule = await Schedule.findOne({ $and: [{ COURSE: course }, { CERTIFICATE: certificate }] });
 
-    const message = schedule.length < 1 ? "No schedule found" : "Schedule found";
-    res.status(200).json({ schedule, message: message });
+    res.status(200).json({ schedule, message: "Schedule found" });
   } catch (error) {
     res
       .status(500)
