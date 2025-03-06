@@ -42,7 +42,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSchedules = exports.getSchedule = void 0;
 var schedule_model_1 = __importDefault(require("../models/schedule.model"));
 var getSchedule = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var course, certificate, schedule, message, error_1;
+    var course, certificate, schedule, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -51,11 +51,10 @@ var getSchedule = function (req, res) { return __awaiter(void 0, void 0, void 0,
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, schedule_model_1.default.find({ $and: [{ COURSE: course }, { CERTIFICATE: certificate }] })];
+                return [4 /*yield*/, schedule_model_1.default.findOne({ $and: [{ COURSE: course }, { CERTIFICATE: certificate }] })];
             case 2:
                 schedule = _a.sent();
-                message = schedule.length < 1 ? "No schedule found" : "Schedule found";
-                res.status(200).json({ schedule: schedule, message: message });
+                res.status(200).json({ schedule: schedule, message: "Schedule found" });
                 return [3 /*break*/, 4];
             case 3:
                 error_1 = _a.sent();

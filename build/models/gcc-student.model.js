@@ -39,5 +39,5 @@ var GCCStudentSchema = new mongoose_1.default.Schema({
         type: String,
     }
 }, { timestamps: false });
-var GCCStudent = mongoose_1.default.model("gcc-student", GCCStudentSchema);
+var GCCStudent = mongoose_1.default.model("gcc_student", GCCStudentSchema);
 exports.default = GCCStudent;
