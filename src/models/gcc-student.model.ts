@@ -42,5 +42,5 @@ const GCCStudentSchema = new mongoose.Schema<GCCStudentInterface>(
   { timestamps: false },
 );
 
-const GCCStudent = mongoose.model("gcc-student", GCCStudentSchema);
+const GCCStudent = mongoose.model("gcc_student", GCCStudentSchema);
 export default GCCStudent;
