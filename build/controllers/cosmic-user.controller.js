@@ -23,10 +23,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LogoutCosmicUser = exports.LoginCosmicUser = exports.SignUpCosmicUser = exports.RegisterCosmicUser = void 0;
+exports.LogoutCosmicUser = exports.GetUsers = exports.LoginCosmicUser = exports.SignUpCosmicUser = exports.RegisterCosmicUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const cosmic_user_model_1 = __importDefault(require("../models/cosmic-user.model"));
 const generateToken_1 = __importDefault(require("../lib/generateToken"));
+const socket_1 = require("../websocket/socket");
 const RegisterCosmicUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { pc, room, password } = req.body;
     try {
@@ -61,6 +62,7 @@ const RegisterCosmicUser = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 },
                 token: token,
             });
+            socket_1.io.emit("updateStats");
         }
     }
     catch (error) {
@@ -104,6 +106,7 @@ const SignUpCosmicUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 },
                 token: token,
             });
+            socket_1.io.emit("updateStats");
         }
     }
     catch (error) {
@@ -134,6 +137,7 @@ const LoginCosmicUser = (req, res) => __awaiter(void 0, void 0, void 0, function
                 res
                     .status(200)
                     .json({ message: "login successful", user: details, token: token });
+                socket_1.io.emit("updateStats");
             }
         }
     }
@@ -144,11 +148,25 @@ const LoginCosmicUser = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.LoginCosmicUser = LoginCosmicUser;
+const GetUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield cosmic_user_model_1.default.find().then((users) => {
+            res.status(200).json({ users: users, message: "users" });
+        });
+    }
+    catch (error) {
+        res
+            .status(500)
+            .json({ message: "failed to logout, internal server error" });
+    }
+});
+exports.GetUsers = GetUsers;
 const LogoutCosmicUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { pc, room } = req.body;
     try {
-        yield cosmic_user_model_1.default.findOneAndUpdate({ pc: pc, room: room }, { logged_in: false });
+        yield cosmic_user_model_1.default.findOneAndUpdate({ pc: pc }, { logged_in: false });
         res.status(200).json({ message: "logged out successfully" });
+        socket_1.io.emit("updateStats");
     }
     catch (error) {
         res

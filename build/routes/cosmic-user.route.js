@@ -11,6 +11,7 @@ router.post("/user/register", cosmic_user_controller_1.RegisterCosmicUser);
 router.post("/user/signup", cosmic_user_controller_1.SignUpCosmicUser);
 router.post("/user/login", cosmic_user_controller_1.LoginCosmicUser);
 router.post("/user/logout", cosmic_user_controller_1.LogoutCosmicUser);
+router.get("/user/all", cosmic_user_controller_1.GetUsers);
 // router.post("/update", protectRoute, updateUser);
 // router.get("/auth", protectRoute, authUser);
 exports.default = router;

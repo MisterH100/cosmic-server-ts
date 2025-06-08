@@ -2,6 +2,7 @@ import express from "express"
 import bcrypt from "bcrypt";
 import CosmicUser from "../models/cosmic-user.model";
 import generateJWTToken from "../lib/generateToken";
+import { io } from "../websocket/socket";
 
 export const RegisterCosmicUser = async (req: express.Request, res: express.Response) => {
   const { pc, room, password } = req.body;
@@ -38,6 +39,7 @@ export const RegisterCosmicUser = async (req: express.Request, res: express.Resp
         },
         token: token,
       });
+      io.emit("updateStats")
     }
   } catch (error) {
     res
@@ -81,6 +83,7 @@ export const SignUpCosmicUser = async (req: express.Request, res: express.Respon
         },
         token: token,
       });
+      io.emit("updateStats")
     }
   } catch (error) {
     res
@@ -111,6 +114,7 @@ export const LoginCosmicUser = async (req: express.Request, res: express.Respons
         res
           .status(200)
           .json({ message: "login successful", user: details, token: token });
+        io.emit("updateStats")
       }
     }
   } catch (error: any) {
@@ -120,15 +124,32 @@ export const LoginCosmicUser = async (req: express.Request, res: express.Respons
   }
 };
 
+export const GetUsers = async (req: express.Request, res: express.Response) => {
+
+  try {
+    await CosmicUser.find(
+    ).then((users) => {
+
+      res.status(200).json({ users: users, message: "users" });
+    });
+
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "failed to logout, internal server error" });
+  }
+}
+
 export const LogoutCosmicUser = async (req: express.Request, res: express.Response) => {
   const { pc, room } = req.body;
   try {
     await CosmicUser.findOneAndUpdate(
-      { pc: pc, room: room },
+      { pc: pc },
       { logged_in: false },
     );
 
     res.status(200).json({ message: "logged out successfully" });
+    io.emit("updateStats")
   } catch (error) {
     res
       .status(500)
