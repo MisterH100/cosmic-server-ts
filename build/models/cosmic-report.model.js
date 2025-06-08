@@ -3,49 +3,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose_1 = __importDefault(require("mongoose"));
-var studentSchema = new mongoose_1.default.Schema({
-    studentID: {
+const mongoose_1 = __importDefault(require("mongoose"));
+const cosmicReportSchema = new mongoose_1.default.Schema({
+    tokenID: {
         type: String,
         required: true,
     },
-    first_name: {
+    category: {
         type: String,
         required: true,
     },
-    last_name: {
+    description: {
         type: String,
         required: true,
     },
-    email: {
+    status: {
         type: String,
         required: true,
     },
-    gender: {
+    notes: {
+        type: String,
+        required: false,
+    },
+    pc: {
         type: String,
         required: true,
-        enum: ["male", "female"],
     },
-    password: {
+    room: {
         type: String,
         required: true,
     },
-    phone: {
+    technician: {
         type: String,
-        default: "",
     },
-    address: {
+    submittedOn: {
         type: String,
-        default: "",
-    },
-    profileImage: {
-        type: String,
-        default: "",
-    },
-    logged_in: {
-        type: Boolean,
-        default: true,
+        required: true,
     },
 }, { timestamps: true });
-var Student = mongoose_1.default.model("Student", studentSchema);
-exports.default = Student;
+const CosmicReport = mongoose_1.default.model("CosmicReport", cosmicReportSchema);
+exports.default = CosmicReport;

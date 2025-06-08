@@ -1,0 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const cosmic_report_controller_1 = require("../controllers/cosmic-report.controller");
+const verifyClearance_1 = __importDefault(require("../middleware/verifyClearance"));
+// import protectRoute from "../middleware/protectRoute.js";
+const router = express_1.default.Router();
+router.post("/report/new", cosmic_report_controller_1.NewReport);
+router.get("/report/all", cosmic_report_controller_1.GetReports);
+router.post("/report/all/user", cosmic_report_controller_1.GetReportsByUser);
+router.get("/report/id/:id", cosmic_report_controller_1.GetReportById);
+router.get("/report/email/:email", cosmic_report_controller_1.GetAssignedReports);
+router.post("/report/notes/:id", cosmic_report_controller_1.UpdateReportNotes);
+router.post("/report/assign/:id", cosmic_report_controller_1.AssignReport);
+router.post("/report/status/:id", cosmic_report_controller_1.UpdateReportStatus);
+router.delete("/report/delete/:id", verifyClearance_1.default, cosmic_report_controller_1.DeleteReport);
+// router.post("/update", protectRoute, updateUser);
+// router.get("/auth", protectRoute, authUser);
+exports.default = router;
