@@ -126,7 +126,7 @@ const UpdateCosmicTechnicianClearance = (req, res) => __awaiter(void 0, void 0, 
 exports.UpdateCosmicTechnicianClearance = UpdateCosmicTechnicianClearance;
 const GetAllCosmicTechnicians = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield cosmic_technician_model_1.default.find().select("email").then((techs) => {
+        yield cosmic_technician_model_1.default.find().select("-password").then((techs) => {
             res.json(techs);
         });
     }

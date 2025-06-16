@@ -102,7 +102,7 @@ export const UpdateCosmicTechnicianClearance = async (req: express.Request, res:
 
 export const GetAllCosmicTechnicians = async (req: express.Request, res: express.Response) => {
   try {
-    await CosmicTechnician.find().select("email").then((techs) => {
+    await CosmicTechnician.find().select("-password").then((techs) => {
       res.json(techs)
     });
 
