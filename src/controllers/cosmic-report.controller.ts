@@ -2,6 +2,7 @@ import express from 'express';
 import CosmicReport from "../models/cosmic-report.model";
 import { io } from '../websocket/socket';
 
+
 export const NewReport = async (req: express.Request, res: express.Response) => {
   const {
     tokenID,
@@ -10,7 +11,9 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
     category,
     status,
     description,
+    technician,
     submittedOn,
+    submittedBy,
     notes,
   } = req.body;
   try {
@@ -22,8 +25,9 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
       status,
       description,
       submittedOn,
+      submittedBy,
       notes,
-      technician: "",
+      technician
     });
     await newReport.save();
     res.json(newReport);

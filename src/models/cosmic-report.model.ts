@@ -37,6 +37,10 @@ const cosmicReportSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    submittedBy: {
+      type: String,
+      default: "",
+    }
   },
   { timestamps: true },
 );

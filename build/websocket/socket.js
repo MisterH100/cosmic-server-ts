@@ -19,10 +19,11 @@ const io = new socket_io_1.Server(server, {
 });
 exports.io = io;
 io.on("connection", (socket) => {
-    const date = Date.now();
+    let date = Date.now();
     console.log(`user connected: ${socket.id} at ${parseTime(date)}`);
     socket.on("disconnect", () => {
-        console.log(`user disconnected: ${socket.id}`);
+        date = Date.now();
+        console.log(`user disconnected: ${socket.id} at ${parseTime(date)}`);
     });
 });
 const parseTime = (date) => {

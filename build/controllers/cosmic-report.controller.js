@@ -16,7 +16,7 @@ exports.DeleteReport = exports.GetAssignedReports = exports.AssignReport = expor
 const cosmic_report_model_1 = __importDefault(require("../models/cosmic-report.model"));
 const socket_1 = require("../websocket/socket");
 const NewReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { tokenID, pc, room, category, status, description, submittedOn, notes, } = req.body;
+    const { tokenID, pc, room, category, status, description, technician, submittedOn, submittedBy, notes, } = req.body;
     try {
         const newReport = new cosmic_report_model_1.default({
             tokenID,
@@ -26,8 +26,9 @@ const NewReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             status,
             description,
             submittedOn,
+            submittedBy,
             notes,
-            technician: "",
+            technician
         });
         yield newReport.save();
         res.json(newReport);

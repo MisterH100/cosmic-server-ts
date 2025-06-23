@@ -40,6 +40,10 @@ const cosmicReportSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    submittedBy: {
+        type: String,
+        default: "",
+    }
 }, { timestamps: true });
 const CosmicReport = mongoose_1.default.model("CosmicReport", cosmicReportSchema);
 exports.default = CosmicReport;
