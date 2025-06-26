@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateCosmicAdminClearance = exports.LogoutCosmicAdmin = exports.LoginCosmicAdmin = exports.RegisterCosmicAdmin = void 0;
+exports.UpdateCosmcicAdminPass = exports.UpdateCosmicAdminClearance = exports.LogoutCosmicAdmin = exports.LoginCosmicAdmin = exports.RegisterCosmicAdmin = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const cosmic_admin_model_1 = __importDefault(require("../models/cosmic-admin.model"));
 const generateToken_1 = __importDefault(require("../lib/generateToken"));
@@ -123,39 +123,31 @@ const UpdateCosmicAdminClearance = (req, res) => __awaiter(void 0, void 0, void 
     }
 });
 exports.UpdateCosmicAdminClearance = UpdateCosmicAdminClearance;
-// export const updateUser = async (req, res) => {
-//   const userID = req.user._id;
-//   const { address, phone } = req.body;
-//   const schema = vine.object({
-//     address: vine.string(),
-//     phone: vine.string(),
-//   });
-//
-//   const data = {
-//     address: address,
-//     phone: phone,
-//   };
-//   try {
-//     const validator = vine.compile(schema);
-//     await validator.validate(data);
-//
-//     await User.findByIdAndUpdate(userID, {
-//       $set: { address: address, phone: phone },
-//     });
-//     res.status(200).json({ message: "update successfully" });
-//   } catch (error) {
-//     if (error instanceof errors.E_VALIDATION_ERROR) {
-//       res.status(400).json({
-//         message: error.messages[0].message,
-//       });
-//     } else {
-//       res
-//         .status(500)
-//         .json({ message: "failed to update, internal server error" });
-//     }
-//   }
-// };
-//
+const UpdateCosmcicAdminPass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { password, id, email } = req.body;
+    try {
+        const salt = bcrypt_1.default.genSaltSync(10);
+        const hashedPassword = bcrypt_1.default.hashSync(password, salt);
+        if (email == "") {
+            yield cosmic_admin_model_1.default.findByIdAndUpdate(id, {
+                $set: { password: hashedPassword },
+            });
+            res.status(200).json({ message: "update successfully" });
+        }
+        else {
+            yield cosmic_admin_model_1.default.findOneAndUpdate({ email: email }, {
+                $set: { password: hashedPassword },
+            });
+            res.status(200).json({ message: "update successfully" });
+        }
+    }
+    catch (error) {
+        res
+            .status(500)
+            .json({ message: "failed to update, internal server error" });
+    }
+});
+exports.UpdateCosmcicAdminPass = UpdateCosmcicAdminPass;
 // export const authUser = async (req, res) => {
 //   const userID = req.user._id;
 //   try {

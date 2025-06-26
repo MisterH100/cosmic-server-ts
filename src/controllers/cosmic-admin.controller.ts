@@ -97,39 +97,31 @@ export const UpdateCosmicAdminClearance = async (req: express.Request, res: expr
   }
 };
 
-// export const updateUser = async (req, res) => {
-//   const userID = req.user._id;
-//   const { address, phone } = req.body;
-//   const schema = vine.object({
-//     address: vine.string(),
-//     phone: vine.string(),
-//   });
-//
-//   const data = {
-//     address: address,
-//     phone: phone,
-//   };
-//   try {
-//     const validator = vine.compile(schema);
-//     await validator.validate(data);
-//
-//     await User.findByIdAndUpdate(userID, {
-//       $set: { address: address, phone: phone },
-//     });
-//     res.status(200).json({ message: "update successfully" });
-//   } catch (error) {
-//     if (error instanceof errors.E_VALIDATION_ERROR) {
-//       res.status(400).json({
-//         message: error.messages[0].message,
-//       });
-//     } else {
-//       res
-//         .status(500)
-//         .json({ message: "failed to update, internal server error" });
-//     }
-//   }
-// };
-//
+export const UpdateCosmcicAdminPass = async (req: express.Request, res: express.Response) => {
+  const { password, id, email } = req.body;
+  try {
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+    if (email == "") {
+      await CosmicAdmin.findByIdAndUpdate(id, {
+        $set: { password: hashedPassword },
+      });
+      res.status(200).json({ message: "update successfully" });
+
+    } else {
+      await CosmicAdmin.findOneAndUpdate({ email: email }, {
+        $set: { password: hashedPassword },
+      });
+      res.status(200).json({ message: "update successfully" });
+
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "failed to update, internal server error" });
+  }
+};
+
 // export const authUser = async (req, res) => {
 //   const userID = req.user._id;
 //   try {

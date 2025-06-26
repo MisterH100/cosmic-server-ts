@@ -27,7 +27,8 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
       submittedOn,
       submittedBy,
       notes,
-      technician
+      technician,
+      history: new Array(),
     });
     await newReport.save();
     res.json(newReport);
@@ -53,14 +54,27 @@ export const GetReportById = async (req: express.Request, res: express.Response)
 
 export const UpdateReportStatus = async (req: express.Request, res: express.Response) => {
   const id = req.params.id;
-  const { status } = req.body;
+  const { adminId, adminEmail, status } = req.body;
   try {
+    let rep = await CosmicReport.findById(id);
     CosmicReport.updateOne(
       { _id: id },
       {
         $set: {
           status: status,
         },
+        $push: {
+          history: {
+            updated_by: {
+              id: adminId,
+              email: adminEmail,
+            },
+            status: status,
+            notes: rep?.notes,
+            assigned_to: rep?.technician,
+            updated_at: Date.now(),
+          }
+        }
       },
     ).then((report) => {
       res.json({ report, status: status });
@@ -75,14 +89,28 @@ export const UpdateReportStatus = async (req: express.Request, res: express.Resp
 
 export const UpdateReportNotes = async (req: express.Request, res: express.Response) => {
   const id = req.params.id;
-  const { notes } = req.body;
+  const { adminId, adminEmail, notes } = req.body;
   try {
+    let rep = await CosmicReport.findById(id);
+
     CosmicReport.updateOne(
       { _id: id },
       {
         $set: {
           notes: notes,
         },
+        $push: {
+          history: {
+            updated_by: {
+              id: adminId,
+              email: adminEmail,
+            },
+            status: rep?.status,
+            notes: notes,
+            assigned_to: rep?.technician,
+            updated_at: Date.now(),
+          }
+        }
       },
     ).then((report) => {
       res.json({ report, notes: notes });
@@ -123,14 +151,28 @@ export const GetReportsByUser = async (req: express.Request, res: express.Respon
 
 export const AssignReport = async (req: express.Request, res: express.Response) => {
   const id = req.params.id;
-  const { technician } = req.body;
+  const { adminId, adminEmail, technician } = req.body;
   try {
+    let rep = await CosmicReport.findById(id);
     CosmicReport.updateOne(
       { _id: id },
       {
         $set: {
           technician: technician,
         },
+        $push: {
+          history: {
+            updated_by: {
+              id: adminId,
+              email: adminEmail,
+            },
+            status: rep?.status,
+            notes: rep?.notes,
+            assigned_to: technician,
+            updated_at: Date.now(),
+
+          }
+        }
       },
     ).then((report) => {
       res.json({ report, technician: technician });

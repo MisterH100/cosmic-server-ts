@@ -112,6 +112,32 @@ export const GetAllCosmicTechnicians = async (req: express.Request, res: express
       .json({ message: "failed to fetch, internal server error" });
   }
 };
+
+export const UpdateCosmcicTechnicianPass = async (req: express.Request, res: express.Response) => {
+  const { password, id, email } = req.body;
+  try {
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+    if (email == "") {
+      await CosmicTechnician.findByIdAndUpdate(id, {
+        $set: { password: hashedPassword },
+      });
+      res.status(200).json({ message: "update successfully" });
+
+    } else {
+      await CosmicTechnician.findOneAndUpdate({ email: email }, {
+        $set: { password: hashedPassword },
+      });
+      res.status(200).json({ message: "update successfully" });
+
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "failed to update, internal server error" });
+  }
+};
+
 // export const updateUser = async (req, res) => {
 //   const userID = req.user._id;
 //   const { address, phone } = req.body;

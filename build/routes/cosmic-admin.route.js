@@ -9,6 +9,7 @@ const cosmic_admin_controller_1 = require("../controllers/cosmic-admin.controlle
 const router = express_1.default.Router();
 router.post("/admin/register", cosmic_admin_controller_1.RegisterCosmicAdmin);
 router.post("/admin/login", cosmic_admin_controller_1.LoginCosmicAdmin);
+router.post("/admin/update/pass", cosmic_admin_controller_1.UpdateCosmcicAdminPass);
 router.post("/admin/logout", cosmic_admin_controller_1.LogoutCosmicAdmin);
 // router.post("/update", protectRoute, updateAdmin);
 // router.get("/auth", protectRoute, authAdmin);

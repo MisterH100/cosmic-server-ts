@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetAllCosmicTechnicians = exports.UpdateCosmicTechnicianClearance = exports.LogoutCosmicTechnician = exports.LoginCosmicTechnician = exports.RegisterCosmicTechnician = void 0;
+exports.UpdateCosmcicTechnicianPass = exports.GetAllCosmicTechnicians = exports.UpdateCosmicTechnicianClearance = exports.LogoutCosmicTechnician = exports.LoginCosmicTechnician = exports.RegisterCosmicTechnician = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const cosmic_technician_model_1 = __importDefault(require("../models/cosmic-technician.model"));
 const generateToken_1 = __importDefault(require("../lib/generateToken"));
@@ -137,6 +137,31 @@ const GetAllCosmicTechnicians = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.GetAllCosmicTechnicians = GetAllCosmicTechnicians;
+const UpdateCosmcicTechnicianPass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { password, id, email } = req.body;
+    try {
+        const salt = bcrypt_1.default.genSaltSync(10);
+        const hashedPassword = bcrypt_1.default.hashSync(password, salt);
+        if (email == "") {
+            yield cosmic_technician_model_1.default.findByIdAndUpdate(id, {
+                $set: { password: hashedPassword },
+            });
+            res.status(200).json({ message: "update successfully" });
+        }
+        else {
+            yield cosmic_technician_model_1.default.findOneAndUpdate({ email: email }, {
+                $set: { password: hashedPassword },
+            });
+            res.status(200).json({ message: "update successfully" });
+        }
+    }
+    catch (error) {
+        res
+            .status(500)
+            .json({ message: "failed to update, internal server error" });
+    }
+});
+exports.UpdateCosmcicTechnicianPass = UpdateCosmcicTechnicianPass;
 // export const updateUser = async (req, res) => {
 //   const userID = req.user._id;
 //   const { address, phone } = req.body;

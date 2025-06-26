@@ -28,7 +28,8 @@ const NewReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             submittedOn,
             submittedBy,
             notes,
-            technician
+            technician,
+            history: new Array(),
         });
         yield newReport.save();
         res.json(newReport);
@@ -56,12 +57,25 @@ const GetReportById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.GetReportById = GetReportById;
 const UpdateReportStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const { status } = req.body;
+    const { adminId, adminEmail, status } = req.body;
     try {
+        let rep = yield cosmic_report_model_1.default.findById(id);
         cosmic_report_model_1.default.updateOne({ _id: id }, {
             $set: {
                 status: status,
             },
+            $push: {
+                history: {
+                    updated_by: {
+                        id: adminId,
+                        email: adminEmail,
+                    },
+                    status: status,
+                    notes: rep === null || rep === void 0 ? void 0 : rep.notes,
+                    assigned_to: rep === null || rep === void 0 ? void 0 : rep.technician,
+                    updated_at: Date.now(),
+                }
+            }
         }).then((report) => {
             res.json({ report, status: status });
         });
@@ -76,12 +90,25 @@ const UpdateReportStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.UpdateReportStatus = UpdateReportStatus;
 const UpdateReportNotes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const { notes } = req.body;
+    const { adminId, adminEmail, notes } = req.body;
     try {
+        let rep = yield cosmic_report_model_1.default.findById(id);
         cosmic_report_model_1.default.updateOne({ _id: id }, {
             $set: {
                 notes: notes,
             },
+            $push: {
+                history: {
+                    updated_by: {
+                        id: adminId,
+                        email: adminEmail,
+                    },
+                    status: rep === null || rep === void 0 ? void 0 : rep.status,
+                    notes: notes,
+                    assigned_to: rep === null || rep === void 0 ? void 0 : rep.technician,
+                    updated_at: Date.now(),
+                }
+            }
         }).then((report) => {
             res.json({ report, notes: notes });
         });
@@ -124,12 +151,25 @@ const GetReportsByUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.GetReportsByUser = GetReportsByUser;
 const AssignReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const { technician } = req.body;
+    const { adminId, adminEmail, technician } = req.body;
     try {
+        let rep = yield cosmic_report_model_1.default.findById(id);
         cosmic_report_model_1.default.updateOne({ _id: id }, {
             $set: {
                 technician: technician,
             },
+            $push: {
+                history: {
+                    updated_by: {
+                        id: adminId,
+                        email: adminEmail,
+                    },
+                    status: rep === null || rep === void 0 ? void 0 : rep.status,
+                    notes: rep === null || rep === void 0 ? void 0 : rep.notes,
+                    assigned_to: technician,
+                    updated_at: Date.now(),
+                }
+            }
         }).then((report) => {
             res.json({ report, technician: technician });
         });

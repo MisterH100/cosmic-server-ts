@@ -36,6 +36,37 @@ const cosmicReportSchema = new mongoose_1.default.Schema({
     technician: {
         type: String,
     },
+    history: {
+        type: [
+            {
+                updated_by: {
+                    type: {
+                        id: {
+                            type: String
+                        },
+                        email: {
+                            type: String
+                        }
+                    }
+                },
+                status: {
+                    type: String,
+                    default: "",
+                },
+                notes: {
+                    type: String,
+                    default: "open"
+                },
+                assigned_to: {
+                    type: String
+                },
+                updated_at: {
+                    type: Date,
+                    default: Date.now(),
+                }
+            }
+        ]
+    },
     submittedOn: {
         type: String,
         required: true,
