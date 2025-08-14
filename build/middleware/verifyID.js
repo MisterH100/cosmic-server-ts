@@ -1,5 +1,5 @@
 "use strict";
-// import express from "express"
+Object.defineProperty(exports, "__esModule", { value: true });
 // import GCCStudent from "../models/gcc-student.model";
 //
 // const verifyID = async (req: any, res: express.Response, next: express.NextFunction) => {
@@ -26,3 +26,17 @@
 // }
 //
 // export default verifyID;
+const verifyID = (req, res, next) => {
+    // const { id } = req.body
+    let id = "pass";
+    try {
+        if (!id) {
+            throw new Error("Forbidden");
+        }
+        next();
+    }
+    catch (error) {
+        res.status(401).json({ message: "Forbidden Operation", error: error.message });
+    }
+};
+exports.default = verifyID;

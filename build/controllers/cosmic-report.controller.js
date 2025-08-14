@@ -17,6 +17,14 @@ const cosmic_report_model_1 = __importDefault(require("../models/cosmic-report.m
 const socket_1 = require("../websocket/socket");
 const NewReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { tokenID, pc, room, category, status, description, technician, submittedOn, submittedBy, notes, } = req.body;
+    const file = req.file;
+    let filename;
+    if (typeof file == "undefined") {
+        filename = "paper.png";
+    }
+    else {
+        filename = file.filename;
+    }
     try {
         const newReport = new cosmic_report_model_1.default({
             tokenID,
@@ -25,6 +33,7 @@ const NewReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             category,
             status,
             description,
+            file: filename,
             submittedOn,
             submittedBy,
             notes,

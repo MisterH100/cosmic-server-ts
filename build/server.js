@@ -14,10 +14,12 @@ const cosmic_technician_route_1 = __importDefault(require("./routes/cosmic-techn
 const cosmic_report_route_1 = __importDefault(require("./routes/cosmic-report.route"));
 const cosmic_user_route_1 = __importDefault(require("./routes/cosmic-user.route"));
 const socket_1 = require("./websocket/socket");
+const verifyID_1 = __importDefault(require("./middleware/verifyID"));
 dotenv_1.default.config();
 socket_1.app.use(express_1.default.json());
 socket_1.app.use(body_parser_1.default.json());
 socket_1.app.use((0, cors_1.default)());
+socket_1.app.use("/uploads", verifyID_1.default, express_1.default.static("uploads"));
 socket_1.app.use("/", home_route_1.default);
 socket_1.app.use("/api", cosmic_admin_route_1.default);
 socket_1.app.use("/api", cosmic_technician_route_1.default);

@@ -17,6 +17,9 @@ const cosmicReportSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    file: {
+        type: String,
+    },
     status: {
         type: String,
         required: true,

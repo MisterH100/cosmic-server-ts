@@ -1,4 +1,4 @@
-// import express from "express"
+import express from "express"
 // import GCCStudent from "../models/gcc-student.model";
 //
 // const verifyID = async (req: any, res: express.Response, next: express.NextFunction) => {
@@ -25,3 +25,18 @@
 // }
 //
 // export default verifyID;
+
+const verifyID = (req: any, res: express.Response, next: express.NextFunction) => {
+  // const { id } = req.body
+  let id = "pass";
+  try {
+    if (!id) {
+      throw new Error("Forbidden")
+    }
+    next()
+  } catch (error: any) {
+    res.status(401).json({ message: "Forbidden Operation", error: error.message });
+  }
+}
+
+export default verifyID;

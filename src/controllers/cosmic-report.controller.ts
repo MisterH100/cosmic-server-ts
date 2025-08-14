@@ -2,7 +2,6 @@ import express from 'express';
 import CosmicReport from "../models/cosmic-report.model";
 import { io } from '../websocket/socket';
 
-
 export const NewReport = async (req: express.Request, res: express.Response) => {
   const {
     tokenID,
@@ -16,6 +15,15 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
     submittedBy,
     notes,
   } = req.body;
+
+  const file = req.file;
+  let filename;
+  if (typeof file == "undefined") {
+    filename = "paper.png"
+  } else {
+    filename = file.filename;
+  }
+
   try {
     const newReport = new CosmicReport({
       tokenID,
@@ -24,6 +32,7 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
       category,
       status,
       description,
+      file: filename,
       submittedOn,
       submittedBy,
       notes,

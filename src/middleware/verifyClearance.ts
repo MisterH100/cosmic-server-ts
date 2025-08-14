@@ -7,11 +7,11 @@ const verifyClearance = async (req: any, res: express.Response, next: express.Ne
   try {
     const admin = await CosmicAdmin.find({ email: adminID });
     if (!admin) {
-      return res.status(401).json({ message: "Forbidden Operation, Only admins can execute this operation", error: "identification error" });
+      throw new Error("identification error")
     }
     next();
-  } catch (error) {
-    res.send(error)
+  } catch (error: any) {
+    res.status(401).json({ message: "Forbidden Operation, Only admins can execute this operation", error: error.message });
   }
 }
 

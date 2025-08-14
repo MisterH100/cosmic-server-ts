@@ -9,11 +9,13 @@ import technicianRoute from "./routes/cosmic-technician.route"
 import reportRoute from "./routes/cosmic-report.route"
 import userRoute from "./routes/cosmic-user.route"
 import { app, server } from "./websocket/socket";
+import verifyID from "./middleware/verifyID";
 dotenv.config();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 
+app.use("/uploads", verifyID, express.static("uploads"));
 app.use("/", homeRoute);
 app.use("/api", adminRoute);
 app.use("/api", technicianRoute)

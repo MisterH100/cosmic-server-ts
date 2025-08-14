@@ -20,12 +20,12 @@ const verifyClearance = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     try {
         const admin = yield cosmic_admin_model_1.default.find({ email: adminID });
         if (!admin) {
-            return res.status(401).json({ message: "Forbidden Operation, Only admins can execute this operation", error: "identification error" });
+            throw new Error("identification error");
         }
         next();
     }
     catch (error) {
-        res.send(error);
+        res.status(401).json({ message: "Forbidden Operation, Only admins can execute this operation", error: error.message });
     }
 });
 exports.default = verifyClearance;

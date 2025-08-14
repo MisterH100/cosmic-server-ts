@@ -14,6 +14,9 @@ const cosmicReportSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    file: {
+      type: String,
+    },
     status: {
       type: String,
       required: true,
