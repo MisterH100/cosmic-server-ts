@@ -2,14 +2,6 @@ import express from 'express';
 import CosmicReport from "../models/cosmic-report.model";
 import { io } from '../websocket/socket';
 import { v2 as cloudinary } from 'cloudinary'
-import path from 'path';
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET
-});
-
 
 export const NewReport = async (req: express.Request, res: express.Response) => {
 
@@ -29,7 +21,7 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
   const file = req.file;
 
   try {
-    let filename;
+    let filename: string;
     if (typeof file == "undefined") {
       filename = "paper.png"
       const newReport = new CosmicReport({
@@ -51,7 +43,10 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
       io.emit("updateReports");
     }
     else {
-      filename = file.filename;
+      let extension = file.mimetype.split("/")[1];
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      filename = file.fieldname + '-' + uniqueSuffix + "." + extension
+
       const cleanseString = (string: string) => {
         return (
           string
@@ -60,39 +55,46 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
             .trim()
         );
       };
-      cloudinary.uploader
-        .upload(path.join(__dirname, `../../uploads/${filename}`),
+
+      new Promise((resolve, reject) => {
+        cloudinary.config({
+          cloud_name: process.env.CLOUD_NAME,
+          api_key: process.env.API_KEY,
+          api_secret: process.env.API_SECRET
+        });
+        cloudinary.uploader.upload_stream(
           {
             folder: "cosmic-uploads",
             public_id: cleanseString(filename),
-          },
-          async (err, data) => {
-            if (err) {
-              throw new Error(err.message)
-            } else {
-
-              const newReport = new CosmicReport({
-                tokenID,
-                pc,
-                room,
-                category,
-                status,
-                description,
-                file: data?.url,
-                submittedOn,
-                submittedBy,
-                notes,
-                technician,
-                history: new Array(),
-              });
-              await newReport.save();
-              res.json(newReport);
-              io.emit("updateReports");
+          }, (error, data) => {
+            if (error) {
+              return reject(error);
             }
-          }
-        )
-    }
+            return resolve(data);
+          }).end(file.buffer);
+      }).then(async (data: any) => {
+        const newReport = new CosmicReport({
+          tokenID,
+          pc,
+          room,
+          category,
+          status,
+          description,
+          file: data?.url,
+          submittedOn,
+          submittedBy,
+          notes,
+          technician,
+          history: new Array(),
+        });
+        await newReport.save();
+        res.json(newReport);
+        io.emit("updateReports");
+      }).catch((error) => {
+        throw new Error(error.message);
+      });
 
+    }
   } catch (error) {
     res.send(error);
   }

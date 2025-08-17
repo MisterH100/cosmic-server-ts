@@ -16,16 +16,7 @@ import verifyClearance from "../middleware/verifyClearance";
 import multer from 'multer';
 
 const router = express.Router();
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, path.join(__dirname, "../../uploads/"))
-  },
-  filename: function(req, file, cb) {
-    let extension = file.mimetype.split("/")[1];
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, file.fieldname + '-' + uniqueSuffix + "." + extension)
-  }
-})
+const storage = multer.memoryStorage()
 
 const upload = multer({ storage: storage });
 router.post("/report/new", upload.single("file"), NewReport);
