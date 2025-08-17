@@ -39,7 +39,7 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
         category,
         status,
         description,
-        file: `https://res.cloudinary.com/dxrpjdomo/image/upload/v1755439422/cosmic-uploads/${filename}`,
+        file: `https://res.cloudinary.com/dxrpjdomo/image/upload/v1755440483/cosmic-uploads/${filename}`,
         submittedOn,
         submittedBy,
         notes,

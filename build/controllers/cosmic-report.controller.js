@@ -18,9 +18,9 @@ const socket_1 = require("../websocket/socket");
 const cloudinary_1 = require("cloudinary");
 const path_1 = __importDefault(require("path"));
 cloudinary_1.v2.config({
-    cloud_name: 'dxrpjdomo',
-    api_key: '461627875175999',
-    api_secret: 'i2c-bmVG4WLXTm8TXnbHReus21Y'
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
 });
 const NewReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { tokenID, pc, room, category, status, description, technician, submittedOn, submittedBy, notes, } = req.body;
@@ -36,7 +36,7 @@ const NewReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 category,
                 status,
                 description,
-                file: `https://res.cloudinary.com/dxrpjdomo/image/upload/v1755439422/cosmic-uploads/${filename}`,
+                file: `https://res.cloudinary.com/dxrpjdomo/image/upload/v1755440483/cosmic-uploads/${filename}`,
                 submittedOn,
                 submittedBy,
                 notes,
