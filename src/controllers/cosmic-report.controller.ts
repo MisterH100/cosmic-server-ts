@@ -1,8 +1,18 @@
 import express from 'express';
 import CosmicReport from "../models/cosmic-report.model";
 import { io } from '../websocket/socket';
+import { v2 as cloudinary } from 'cloudinary'
+import path from 'path';
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
+});
+
 
 export const NewReport = async (req: express.Request, res: express.Response) => {
+
   const {
     tokenID,
     pc,
@@ -17,31 +27,72 @@ export const NewReport = async (req: express.Request, res: express.Response) => 
   } = req.body;
 
   const file = req.file;
-  let filename;
-  if (typeof file == "undefined") {
-    filename = "paper.png"
-  } else {
-    filename = file.filename;
-  }
 
   try {
-    const newReport = new CosmicReport({
-      tokenID,
-      pc,
-      room,
-      category,
-      status,
-      description,
-      file: filename,
-      submittedOn,
-      submittedBy,
-      notes,
-      technician,
-      history: new Array(),
-    });
-    await newReport.save();
-    res.json(newReport);
-    io.emit("updateReports");
+    let filename;
+    if (typeof file == "undefined") {
+      filename = "paper.png"
+      const newReport = new CosmicReport({
+        tokenID,
+        pc,
+        room,
+        category,
+        status,
+        description,
+        file: `https://res.cloudinary.com/dxrpjdomo/image/upload/v1755439422/cosmic-uploads/${filename}`,
+        submittedOn,
+        submittedBy,
+        notes,
+        technician,
+        history: new Array(),
+      });
+      await newReport.save();
+      res.json(newReport);
+      io.emit("updateReports");
+    }
+    else {
+      filename = file.filename;
+      const cleanseString = (string: string) => {
+        return (
+          string
+            .replace(/.png|.jpg|.jpeg/gi, "")
+            .toLocaleLowerCase()
+            .trim()
+        );
+      };
+      cloudinary.uploader
+        .upload(path.join(__dirname, `../../uploads/${filename}`),
+          {
+            folder: "cosmic-uploads",
+            public_id: cleanseString(filename),
+          },
+          async (err, data) => {
+            if (err) {
+              throw new Error(err.message)
+            } else {
+
+              const newReport = new CosmicReport({
+                tokenID,
+                pc,
+                room,
+                category,
+                status,
+                description,
+                file: data?.url,
+                submittedOn,
+                submittedBy,
+                notes,
+                technician,
+                history: new Array(),
+              });
+              await newReport.save();
+              res.json(newReport);
+              io.emit("updateReports");
+            }
+          }
+        )
+    }
+
   } catch (error) {
     res.send(error);
   }

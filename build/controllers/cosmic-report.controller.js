@@ -15,34 +15,75 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteReport = exports.GetAssignedReports = exports.AssignReport = exports.GetReportsByUser = exports.GetReports = exports.UpdateReportNotes = exports.UpdateReportStatus = exports.GetReportById = exports.NewReport = void 0;
 const cosmic_report_model_1 = __importDefault(require("../models/cosmic-report.model"));
 const socket_1 = require("../websocket/socket");
+const cloudinary_1 = require("cloudinary");
+const path_1 = __importDefault(require("path"));
+cloudinary_1.v2.config({
+    cloud_name: 'dxrpjdomo',
+    api_key: '461627875175999',
+    api_secret: 'i2c-bmVG4WLXTm8TXnbHReus21Y'
+});
 const NewReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { tokenID, pc, room, category, status, description, technician, submittedOn, submittedBy, notes, } = req.body;
     const file = req.file;
-    let filename;
-    if (typeof file == "undefined") {
-        filename = "paper.png";
-    }
-    else {
-        filename = file.filename;
-    }
     try {
-        const newReport = new cosmic_report_model_1.default({
-            tokenID,
-            pc,
-            room,
-            category,
-            status,
-            description,
-            file: filename,
-            submittedOn,
-            submittedBy,
-            notes,
-            technician,
-            history: new Array(),
-        });
-        yield newReport.save();
-        res.json(newReport);
-        socket_1.io.emit("updateReports");
+        let filename;
+        if (typeof file == "undefined") {
+            filename = "paper.png";
+            const newReport = new cosmic_report_model_1.default({
+                tokenID,
+                pc,
+                room,
+                category,
+                status,
+                description,
+                file: `https://res.cloudinary.com/dxrpjdomo/image/upload/v1755439422/cosmic-uploads/${filename}`,
+                submittedOn,
+                submittedBy,
+                notes,
+                technician,
+                history: new Array(),
+            });
+            yield newReport.save();
+            res.json(newReport);
+            socket_1.io.emit("updateReports");
+        }
+        else {
+            filename = file.filename;
+            const cleanseString = (string) => {
+                return (string
+                    .replace(/.png|.jpg|.jpeg/gi, "")
+                    .toLocaleLowerCase()
+                    .trim());
+            };
+            cloudinary_1.v2.uploader
+                .upload(path_1.default.join(__dirname, `../../uploads/${filename}`), {
+                folder: "cosmic-uploads",
+                public_id: cleanseString(filename),
+            }, (err, data) => __awaiter(void 0, void 0, void 0, function* () {
+                if (err) {
+                    throw new Error(err.message);
+                }
+                else {
+                    const newReport = new cosmic_report_model_1.default({
+                        tokenID,
+                        pc,
+                        room,
+                        category,
+                        status,
+                        description,
+                        file: data === null || data === void 0 ? void 0 : data.url,
+                        submittedOn,
+                        submittedBy,
+                        notes,
+                        technician,
+                        history: new Array(),
+                    });
+                    yield newReport.save();
+                    res.json(newReport);
+                    socket_1.io.emit("updateReports");
+                }
+            }));
+        }
     }
     catch (error) {
         res.send(error);

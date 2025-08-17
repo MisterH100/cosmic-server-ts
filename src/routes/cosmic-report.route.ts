@@ -14,6 +14,7 @@ import {
 // import protectRoute from "../middleware/protectRoute.js";
 import verifyClearance from "../middleware/verifyClearance";
 import multer from 'multer';
+
 const router = express.Router();
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -27,7 +28,6 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage: storage });
-
 router.post("/report/new", upload.single("file"), NewReport);
 router.get("/report/all", GetReports);
 router.post("/report/all/user", GetReportsByUser);
